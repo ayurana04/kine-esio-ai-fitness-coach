@@ -1,68 +1,53 @@
-import { Text, View, TextInput, TouchableOpacity, StyleSheet, Linking } from 'react-native';
-import { useState } from 'react';
+import { Text, View, StyleSheet } from 'react-native';
+import { CameraView, useCameraPermissions } from 'expo-camera';
 
 export default function CameraScreen() {
-  const [exercise, setExercise] = useState('');
-  const [videoLink, setVideoLink] = useState('');
+  const [permission, requestPermission] = useCameraPermissions();
 
-  const getVideo = () => {
-    let link = "";
+  if (!permission) {
+    return <Text>Requesting permission...</Text>;
+  }
 
-    if (exercise.toLowerCase() === "pushup") {
-      link = "https://www.youtube.com/watch?v=IODxDxX7oi4";
-    } else if (exercise.toLowerCase() === "squat") {
-      link = "https://www.youtube.com/watch?v=aclHkVaku9U";
-    } else if (exercise.toLowerCase() === "plank") {
-      link = "https://www.youtube.com/watch?v=pSHjTRCQxIw";
-    } else {
-      link = "https://www.youtube.com";
-    }
-
-    setVideoLink(link);
-  };
+  if (!permission.granted) {
+    return (
+      <View style={styles.container}>
+        <Text>No access to camera</Text>
+        <Text onPress={requestPermission}>Grant Permission</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Exercise Guide 📷</Text>
+      <CameraView style={styles.camera} facing="front" />
 
-      <TextInput
-        placeholder="Enter exercise (pushup/squat/plank)"
-        style={styles.input}
-        onChangeText={setExercise}
-      />
+      <Text style={styles.text}>📷 Camera Active</Text>
 
-      <TouchableOpacity style={styles.button} onPress={getVideo}>
-        <Text style={styles.buttonText}>Get Video</Text>
-      </TouchableOpacity>
-
-      {videoLink !== "" && (
-        <TouchableOpacity onPress={() => Linking.openURL(videoLink)}>
-          <Text style={styles.link}>▶ Watch Video</Text>
-        </TouchableOpacity>
-      )}
+      <Text style={styles.warning}>
+        ⚠️ Keep your back straight
+      </Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 20 },
-  title: { fontSize: 22, fontWeight: 'bold', marginBottom: 20 },
-  input: {
-    borderWidth: 1,
-    padding: 10,
-    marginVertical: 10,
-    borderRadius: 8,
+  container: { flex: 1 },
+  camera: { flex: 1 },
+
+  text: {
+    position: 'absolute',
+    bottom: 40,
+    alignSelf: 'center',
+    color: '#fff',
+    fontSize: 18,
   },
-  button: {
-    backgroundColor: 'purple',
-    padding: 12,
-    marginTop: 10,
-    borderRadius: 8,
-  },
-  buttonText: { color: '#fff', textAlign: 'center' },
-  link: {
-    marginTop: 20,
-    color: 'blue',
-    fontSize: 16,
+
+  warning: {
+    position: 'absolute',
+    top: 50,
+    alignSelf: 'center',
+    color: 'yellow',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });

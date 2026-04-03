@@ -2,23 +2,33 @@ import { Text, View, TextInput, TouchableOpacity, StyleSheet } from 'react-nativ
 import { useState } from 'react';
 
 export default function Diet() {
-  const [goal, setGoal] = useState('');
   const [budget, setBudget] = useState('');
+  const [condition, setCondition] = useState('');
   const [result, setResult] = useState('');
 
   const generateDiet = () => {
     let plan = "";
 
-    if (goal.toLowerCase() === "weight loss") {
-      plan = "Breakfast: Oats + Fruits\nLunch: Roti + Sabzi\nDinner: Salad + Soup";
-    } else if (goal.toLowerCase() === "weight gain") {
-      plan = "Breakfast: Milk + Banana\nLunch: Rice + Dal + Paneer\nDinner: Roti + Chicken";
+    // 💰 Budget logic
+    if (budget.toLowerCase() === "low") {
+      plan += "Breakfast: Oats / Poha\nLunch: Roti + Dal\nDinner: Khichdi\n";
+    } else if (budget.toLowerCase() === "medium") {
+      plan += "Breakfast: Milk + Fruits\nLunch: Roti + Paneer\nDinner: Rice + Dal\n";
+    } else if (budget.toLowerCase() === "high") {
+      plan += "Breakfast: Smoothie + Nuts\nLunch: Chicken + Rice\nDinner: Salad + Soup\n";
     } else {
-      plan = "Enter valid goal";
+      plan += "Enter valid budget (low/medium/high)\n";
     }
 
-    if (budget === "low") {
-      plan += "\n(Budget Friendly Options Included)";
+    // 🏥 Medical condition logic
+    if (condition.toLowerCase() === "diabetes") {
+      plan += "\n⚠️ Avoid sugar, include fiber-rich foods like oats & vegetables";
+    } else if (condition.toLowerCase() === "bp") {
+      plan += "\n⚠️ Reduce salt, eat fruits like banana & leafy greens";
+    } else if (condition.toLowerCase() === "none") {
+      plan += "\n✅ No medical restrictions";
+    } else {
+      plan += "\n⚠️ Enter valid condition (diabetes / bp / none)";
     }
 
     setResult(plan);
@@ -29,15 +39,15 @@ export default function Diet() {
       <Text style={styles.title}>AI Diet Planner 🥗</Text>
 
       <TextInput
-        placeholder="Goal (weight loss / weight gain)"
-        style={styles.input}
-        onChangeText={setGoal}
-      />
-
-      <TextInput
         placeholder="Budget (low / medium / high)"
         style={styles.input}
         onChangeText={setBudget}
+      />
+
+      <TextInput
+        placeholder="Medical condition (diabetes / bp / none)"
+        style={styles.input}
+        onChangeText={setCondition}
       />
 
       <TouchableOpacity style={styles.button} onPress={generateDiet}>
